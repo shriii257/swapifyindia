@@ -1,5 +1,5 @@
 const Ticket = require('../models/Ticket');
-const Order = require('../models/Order');
+const Order = require('../models/order');
 
 // GET /api/dashboard/seller
 exports.getSellerDashboard = async (req, res) => {
