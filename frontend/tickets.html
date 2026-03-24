@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Browse Tickets – SwapifyIndia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#0a0a0a] text-white">
+
+<!-- NAVBAR -->
+<nav id="navbar" class="nav-scrolled fixed top-0 left-0 right-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-[#ff4d1c] flex items-center justify-center font-black text-sm">S</div>
+      <span class="font-black text-xl" style="font-family:'Syne',sans-serif">SwapifyIndia</span>
+    </a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="tickets.html" class="text-sm text-white font-semibold">Browse Tickets</a>
+      <a href="sell-ticket.html" class="text-sm text-gray-400 hover:text-white transition-colors">Sell a Ticket</a>
+      <a href="dashboard.html" class="text-sm text-gray-400 hover:text-white transition-colors" id="nav-dashboard" style="display:none">Dashboard</a>
+    </div>
+    <div class="flex items-center gap-3" id="nav-auth">
+      <a href="login.html" class="text-sm text-gray-400 hover:text-white transition-colors px-4 py-2">Login</a>
+      <a href="signup.html" class="btn-primary text-sm px-5 py-2 rounded-full font-semibold">Get Started</a>
+    </div>
+    <div class="hidden items-center gap-3" id="nav-user">
+      <span class="text-sm text-gray-400" id="nav-username"></span>
+      <button onclick="logout()" class="text-sm text-[#ff4d1c] hover:text-red-400">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<div class="pt-20 min-h-screen">
+  <!-- PAGE HEADER -->
+  <div class="bg-[#0f0f0f] border-b border-white/5 py-10 px-6">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="text-4xl font-black mb-2" style="font-family:'Syne',sans-serif">Browse <span class="text-gradient">Tickets</span></h1>
+      <p class="text-gray-400 text-sm">Find and buy tickets at face value from real people</p>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 py-8">
+    <!-- FILTERS -->
+    <div class="search-card p-4 rounded-2xl mb-8">
+      <div class="flex flex-wrap gap-3">
+        <input type="text" id="filter-search" placeholder="Search events..." class="form-input flex-1 min-w-48 py-2.5"/>
+        <select id="filter-city" class="form-input w-40 py-2.5">
+          <option value="">All Cities</option>
+          <option>Mumbai</option><option>Delhi</option><option>Bengaluru</option>
+          <option>Chennai</option><option>Hyderabad</option><option>Kolkata</option>
+          <option>Pune</option><option>Ahmedabad</option><option>Goa</option>
+        </select>
+        <select id="filter-category" class="form-input w-44 py-2.5">
+          <option value="">All Categories</option>
+          <option>Concerts</option><option>Sports</option><option>Movies</option>
+          <option>Comedy Shows</option><option>Festivals</option><option>Other Events</option>
+        </select>
+        <input type="date" id="filter-date" class="form-input w-40 py-2.5"/>
+        <div class="flex gap-2 items-center">
+          <input type="number" id="filter-min-price" placeholder="Min ₹" class="form-input w-24 py-2.5"/>
+          <span class="text-gray-600 text-sm">–</span>
+          <input type="number" id="filter-max-price" placeholder="Max ₹" class="form-input w-24 py-2.5"/>
+        </div>
+        <button onclick="applyFilters()" class="btn-primary px-6 py-2.5 rounded-xl font-semibold text-sm">Filter</button>
+        <button onclick="clearFilters()" class="btn-ghost px-5 py-2.5 rounded-xl font-semibold text-sm">Clear</button>
+      </div>
+    </div>
+
+    <!-- CATEGORY PILLS -->
+    <div class="flex gap-2 flex-wrap mb-6" id="category-pills">
+      <button onclick="filterByCategory('')" class="cat-pill active px-4 py-2 rounded-full text-xs font-semibold border border-white/10 bg-white/5 hover:border-[#ff4d1c]/50 transition-all" data-cat="">All</button>
+      <button onclick="filterByCategory('Concerts')" class="cat-pill px-4 py-2 rounded-full text-xs font-semibold border border-white/10 bg-white/5 hover:border-[#ff4d1c]/50 transition-all" data-cat="Concerts">🎵 Concerts</button>
+      <button onclick="filterByCategory('Sports')" class="cat-pill px-4 py-2 rounded-full text-xs font-semibold border border-white/10 bg-white/5 hover:border-[#ff4d1c]/50 transition-all" data-cat="Sports">🏏 Sports</button>
+      <button onclick="filterByCategory('Movies')" class="cat-pill px-4 py-2 rounded-full text-xs font-semibold border border-white/10 bg-white/5 hover:border-[#ff4d1c]/50 transition-all" data-cat="Movies">🎬 Movies</button>
+      <button onclick="filterByCategory('Comedy Shows')" class="cat-pill px-4 py-2 rounded-full text-xs font-semibold border border-white/10 bg-white/5 hover:border-[#ff4d1c]/50 transition-all" data-cat="Comedy Shows">😂 Comedy</button>
+      <button onclick="filterByCategory('Festivals')" class="cat-pill px-4 py-2 rounded-full text-xs font-semibold border border-white/10 bg-white/5 hover:border-[#ff4d1c]/50 transition-all" data-cat="Festivals">🎪 Festivals</button>
+      <button onclick="filterByCategory('Other Events')" class="cat-pill px-4 py-2 rounded-full text-xs font-semibold border border-white/10 bg-white/5 hover:border-[#ff4d1c]/50 transition-all" data-cat="Other Events">✨ Other</button>
+    </div>
+
+    <!-- RESULTS INFO -->
+    <div class="flex items-center justify-between mb-6">
+      <p id="results-info" class="text-gray-400 text-sm">Loading tickets...</p>
+      <select id="sort-by" onchange="applyFilters()" class="form-input w-44 py-2 text-sm">
+        <option value="createdAt:-1">Newest First</option>
+        <option value="date:1">Event Date ↑</option>
+        <option value="price:1">Price: Low–High</option>
+        <option value="price:-1">Price: High–Low</option>
+      </select>
+    </div>
+
+    <!-- TICKETS GRID -->
+    <div id="tickets-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div class="ticket-skeleton rounded-2xl h-72"></div>
+      <div class="ticket-skeleton rounded-2xl h-72"></div>
+      <div class="ticket-skeleton rounded-2xl h-72"></div>
+      <div class="ticket-skeleton rounded-2xl h-72"></div>
+    </div>
+
+    <!-- PAGINATION -->
+    <div id="pagination" class="flex justify-center gap-2 mt-12"></div>
+  </div>
+</div>
+
+<style>
+.cat-pill.active {
+  background: rgba(255,77,28,0.15);
+  border-color: rgba(255,77,28,0.4);
+  color: #ff4d1c;
+}
+</style>
+
+<script src="js/app.js"></script>
+<script>
+let currentPage = 1;
+let currentFilters = {};
+
+window.addEventListener('DOMContentLoaded', () => {
+  updateNavAuth();
+  // Pre-fill from URL params
+  const cat = getParam('category');
+  const city = getParam('city');
+  const q = getParam('q');
+  if (cat) { document.getElementById('filter-category').value = cat; markActivePill(cat); }
+  if (city) document.getElementById('filter-city').value = city;
+  if (q) document.getElementById('filter-search').value = q;
+  loadTickets();
+});
+
+function filterByCategory(cat) {
+  document.getElementById('filter-category').value = cat;
+  markActivePill(cat);
+  currentPage = 1;
+  loadTickets();
+}
+
+function markActivePill(cat) {
+  document.querySelectorAll('.cat-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.cat === cat);
+  });
+}
+
+function applyFilters() {
+  currentPage = 1;
+  loadTickets();
+}
+
+function clearFilters() {
+  document.getElementById('filter-search').value = '';
+  document.getElementById('filter-city').value = '';
+  document.getElementById('filter-category').value = '';
+  document.getElementById('filter-date').value = '';
+  document.getElementById('filter-min-price').value = '';
+  document.getElementById('filter-max-price').value = '';
+  markActivePill('');
+  currentPage = 1;
+  loadTickets();
+}
+
+async function loadTickets() {
+  const grid = document.getElementById('tickets-grid');
+  grid.innerHTML = Array(8).fill('<div class="ticket-skeleton rounded-2xl h-72"></div>').join('');
+
+  const params = new URLSearchParams();
+  params.set('page', currentPage);
+  params.set('limit', 12);
+  params.set('status', 'available');
+
+  const q = document.getElementById('filter-search').value.trim();
+  const city = document.getElementById('filter-city').value;
+  const cat = document.getElementById('filter-category').value;
+  const date = document.getElementById('filter-date').value;
+  const minP = document.getElementById('filter-min-price').value;
+  const maxP = document.getElementById('filter-max-price').value;
+  const sort = document.getElementById('sort-by').value;
+
+  if (q) params.set('q', q);
+  if (city) params.set('city', city);
+  if (cat) params.set('category', cat);
+  if (date) params.set('date', date);
+  if (minP) params.set('minPrice', minP);
+  if (maxP) params.set('maxPrice', maxP);
+  if (sort) params.set('sort', sort);
+
+  try {
+    const data = await fetch(`${API_BASE}/tickets?${params}`).then(r => r.json());
+    renderTickets(data.tickets || [], data.total || 0, data.pages || 1);
+  } catch(e) {
+    // Fallback demo data
+    const demo = demoTickets();
+    renderTickets(demo, demo.length, 1);
+  }
+}
+
+function renderTickets(tickets, total, totalPages) {
+  const grid = document.getElementById('tickets-grid');
+  document.getElementById('results-info').textContent = `${total} ticket${total !== 1 ? 's' : ''} found`;
+
+  if (tickets.length === 0) {
+    grid.innerHTML = `
+      <div class="col-span-4 text-center py-20">
+        <div class="text-5xl mb-4">🎟</div>
+        <p class="text-gray-400 text-lg mb-2">No tickets found</p>
+        <p class="text-gray-600 text-sm mb-6">Try adjusting your filters or be the first to list!</p>
+        <a href="sell-ticket.html" class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm">Sell a Ticket</a>
+      </div>`;
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+
+  grid.innerHTML = tickets.map(t => renderTicketCard(t)).join('');
+
+  // Pagination
+  const pag = document.getElementById('pagination');
+  if (totalPages <= 1) { pag.innerHTML = ''; return; }
+
+  let html = '';
+  if (currentPage > 1) html += `<button class="page-btn" onclick="goPage(${currentPage-1})">‹</button>`;
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || Math.abs(i - currentPage) <= 2) {
+      html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+    } else if (Math.abs(i - currentPage) === 3) {
+      html += `<span class="page-btn" style="cursor:default">…</span>`;
+    }
+  }
+  if (currentPage < totalPages) html += `<button class="page-btn" onclick="goPage(${currentPage+1})">›</button>`;
+  pag.innerHTML = html;
+}
+
+function goPage(p) {
+  currentPage = p;
+  loadTickets();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard – SwapifyIndia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#0a0a0a] text-white">
+
+<!-- NAVBAR -->
+<nav class="nav-scrolled fixed top-0 left-0 right-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-[#ff4d1c] flex items-center justify-center font-black text-sm">S</div>
+      <span class="font-black text-xl" style="font-family:'Syne',sans-serif">SwapifyIndia</span>
+    </a>
+    <div class="hidden md:flex items-center gap-6">
+      <a href="tickets.html" class="text-sm text-gray-400 hover:text-white">Browse Tickets</a>
+      <a href="sell-ticket.html" class="btn-primary text-sm px-5 py-2 rounded-full font-semibold">+ Sell Ticket</a>
+    </div>
+    <div class="hidden items-center gap-3" id="nav-user">
+      <span class="text-sm text-gray-400" id="nav-username"></span>
+      <button onclick="logout()" class="text-sm text-[#ff4d1c]">Logout</button>
+    </div>
+    <div class="flex items-center gap-3" id="nav-auth">
+      <a href="login.html" class="text-sm text-gray-400 hover:text-white px-4 py-2">Login</a>
+      <a href="signup.html" class="btn-primary text-sm px-5 py-2 rounded-full font-semibold">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<div class="pt-20 min-h-screen">
+  <div class="max-w-7xl mx-auto px-6 py-10">
+    <!-- Header -->
+    <div class="flex items-start justify-between mb-8">
+      <div>
+        <h1 class="text-4xl font-black mb-1" style="font-family:'Syne',sans-serif">
+          Dashboard
+        </h1>
+        <p class="text-gray-400 text-sm" id="welcome-msg">Welcome back!</p>
+      </div>
+      <a href="sell-ticket.html" class="btn-primary px-6 py-3 rounded-xl font-bold text-sm hidden md:inline-flex items-center gap-2">
+        + List New Ticket
+      </a>
+    </div>
+
+    <!-- TAB NAVIGATION -->
+    <div class="flex gap-1 mb-8 bg-[#111] p-1.5 rounded-xl border border-white/10 w-fit">
+      <button onclick="switchTab('seller')" id="tab-seller" class="tab-btn px-5 py-2 rounded-lg text-sm font-semibold transition-all active">
+        🎟 My Listings
+      </button>
+      <button onclick="switchTab('buyer')" id="tab-buyer" class="tab-btn px-5 py-2 rounded-lg text-sm font-semibold transition-all">
+        🛍 Purchased
+      </button>
+    </div>
+
+    <!-- SELLER VIEW -->
+    <div id="view-seller">
+      <!-- Stats -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="stat-card">
+          <p class="text-xs text-gray-500 mb-2 uppercase tracking-wider">Total Listed</p>
+          <p class="text-3xl font-black" style="font-family:'Syne',sans-serif" id="stat-listed">–</p>
+          <p class="text-xs text-gray-500 mt-1">tickets</p>
+        </div>
+        <div class="stat-card">
+          <p class="text-xs text-gray-500 mb-2 uppercase tracking-wider">Sold</p>
+          <p class="text-3xl font-black text-green-400" style="font-family:'Syne',sans-serif" id="stat-sold">–</p>
+          <p class="text-xs text-gray-500 mt-1">tickets</p>
+        </div>
+        <div class="stat-card">
+          <p class="text-xs text-gray-500 mb-2 uppercase tracking-wider">Active</p>
+          <p class="text-3xl font-black text-[#ff4d1c]" style="font-family:'Syne',sans-serif" id="stat-active">–</p>
+          <p class="text-xs text-gray-500 mt-1">listings</p>
+        </div>
+        <div class="stat-card">
+          <p class="text-xs text-gray-500 mb-2 uppercase tracking-wider">Total Earnings</p>
+          <p class="text-3xl font-black text-yellow-400" style="font-family:'Syne',sans-serif" id="stat-earnings">–</p>
+          <p class="text-xs text-gray-500 mt-1">after 10% fee</p>
+        </div>
+      </div>
+
+      <!-- My Listings Table -->
+      <div class="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
+        <div class="flex items-center justify-between p-6 border-b border-white/10">
+          <h2 class="font-bold" style="font-family:'Syne',sans-serif">My Ticket Listings</h2>
+          <a href="sell-ticket.html" class="text-xs text-[#ff4d1c] font-semibold hover:text-orange-400">+ Add New</a>
+        </div>
+        <div id="seller-tickets-content">
+          <div class="p-6 text-center text-gray-500">
+            <div class="animate-pulse text-2xl mb-2">⏳</div>
+            <p class="text-sm">Loading your listings...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUYER VIEW -->
+    <div id="view-buyer" class="hidden">
+      <div class="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
+        <div class="p-6 border-b border-white/10">
+          <h2 class="font-bold" style="font-family:'Syne',sans-serif">Purchased Tickets</h2>
+          <p class="text-xs text-gray-500 mt-1">All your purchased tickets with QR codes</p>
+        </div>
+        <div id="buyer-tickets-content">
+          <div class="p-6 text-center text-gray-500">
+            <div class="animate-pulse text-2xl mb-2">⏳</div>
+            <p class="text-sm">Loading your purchases...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TICKET MODAL for viewing full QR -->
+<div id="qr-modal" class="modal-overlay hidden" onclick="closeModal(event)">
+  <div class="modal-box">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="font-black" style="font-family:'Syne',sans-serif" id="modal-title">Your Ticket</h3>
+      <button onclick="document.getElementById('qr-modal').classList.add('hidden')" class="text-gray-400 hover:text-white text-xl leading-none">×</button>
+    </div>
+    <img id="modal-img" src="" alt="Ticket" class="w-full rounded-xl mb-4"/>
+    <p class="text-xs text-gray-400 text-center mb-4" id="modal-desc"></p>
+    <a id="modal-download" href="#" download class="btn-primary w-full py-3 rounded-xl font-bold text-sm text-center block">⬇ Download Ticket</a>
+  </div>
+</div>
+
+<style>
+.tab-btn { color: #666; }
+.tab-btn.active { background: #1f1f1f; color: white; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+</style>
+
+<script src="js/app.js"></script>
+<script>
+let sellerData = null;
+let buyerData = null;
+
+window.addEventListener('DOMContentLoaded', () => {
+  updateNavAuth();
+  if (!isLoggedIn()) {
+    window.location.href = 'login.html?redirect=dashboard.html';
+    return;
+  }
+  const user = getUser();
+  if (user) {
+    document.getElementById('welcome-msg').textContent = `Welcome back, ${user.name}!`;
+    document.getElementById('nav-username').textContent = `Hi, ${user.name.split(' ')[0]}`;
+  }
+  loadSellerData();
+});
+
+function switchTab(tab) {
+  document.getElementById('tab-seller').classList.toggle('active', tab === 'seller');
+  document.getElementById('tab-buyer').classList.toggle('active', tab === 'buyer');
+  document.getElementById('view-seller').classList.toggle('hidden', tab !== 'seller');
+  document.getElementById('view-buyer').classList.toggle('hidden', tab !== 'buyer');
+  if (tab === 'buyer' && !buyerData) loadBuyerData();
+}
+
+async function loadSellerData() {
+  try {
+    const data = await apiCall('/dashboard/seller');
+    sellerData = data;
+    renderSellerStats(data);
+    renderSellerTickets(data.tickets);
+  } catch(e) {
+    renderSellerStats({ listed: 0, sold: 0, active: 0, earnings: 0, tickets: [] });
+    document.getElementById('seller-tickets-content').innerHTML = `
+      <div class="p-8 text-center">
+        <div class="text-4xl mb-3">🎟</div>
+        <p class="text-gray-400 mb-4">You haven't listed any tickets yet</p>
+        <a href="sell-ticket.html" class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm">List Your First Ticket</a>
+      </div>`;
+  }
+}
+
+function renderSellerStats(data) {
+  document.getElementById('stat-listed').textContent = data.listed ?? 0;
+  document.getElementById('stat-sold').textContent = data.sold ?? 0;
+  document.getElementById('stat-active').textContent = data.active ?? 0;
+  document.getElementById('stat-earnings').textContent = rupees(data.earnings ?? 0);
+}
+
+function renderSellerTickets(tickets) {
+  if (!tickets || tickets.length === 0) {
+    document.getElementById('seller-tickets-content').innerHTML = `
+      <div class="p-8 text-center">
+        <div class="text-4xl mb-3">🎟</div>
+        <p class="text-gray-400 mb-4">No tickets listed yet</p>
+        <a href="sell-ticket.html" class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm">List Your First Ticket</a>
+      </div>`;
+    return;
+  }
+
+  const statusBadge = (s) => {
+    const map = {
+      available: 'bg-green-500/10 text-green-400 border-green-500/20',
+      sold: 'bg-red-500/10 text-red-400 border-red-500/20',
+      returned: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
+      expired: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
+      reserved: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
+    };
+    return `<span class="px-2.5 py-1 rounded-full text-xs font-semibold border ${map[s]||map.available}">${s}</span>`;
+  };
+
+  document.getElementById('seller-tickets-content').innerHTML = `
+    <div class="overflow-x-auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Date</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Earned</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${tickets.map(t => `
+            <tr>
+              <td>
+                <div>
+                  <p class="font-semibold text-white text-sm">${t.eventName}</p>
+                  <p class="text-xs text-gray-500">${t.city} · ${t.seat}</p>
+                </div>
+              </td>
+              <td>${new Date(t.date).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}</td>
+              <td class="font-semibold text-[#ff4d1c]">${rupees(t.price)}</td>
+              <td>${statusBadge(t.status)}</td>
+              <td class="text-green-400 font-semibold">${t.status === 'sold' ? rupees(Math.round(t.price * 0.9)) : '–'}</td>
+              <td>
+                <div class="flex gap-2">
+                  <a href="ticket-details.html?id=${t._id}" class="text-xs px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">View</a>
+                  ${t.status === 'available' ? `<button onclick="deleteTicket('${t._id}')" class="text-xs px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors">Remove</button>` : ''}
+                </div>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+async function loadBuyerData() {
+  try {
+    const data = await apiCall('/dashboard/buyer');
+    buyerData = data;
+    renderBuyerTickets(data.orders);
+  } catch(e) {
+    document.getElementById('buyer-tickets-content').innerHTML = `
+      <div class="p-8 text-center">
+        <div class="text-4xl mb-3">🛍</div>
+        <p class="text-gray-400 mb-4">You haven't purchased any tickets yet</p>
+        <a href="tickets.html" class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm">Browse Tickets</a>
+      </div>`;
+  }
+}
+
+function renderBuyerTickets(orders) {
+  if (!orders || orders.length === 0) {
+    document.getElementById('buyer-tickets-content').innerHTML = `
+      <div class="p-8 text-center">
+        <div class="text-4xl mb-3">🛍</div>
+        <p class="text-gray-400 mb-4">No purchases yet</p>
+        <a href="tickets.html" class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm">Browse Tickets</a>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('buyer-tickets-content').innerHTML = `
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
+      ${orders.map(o => {
+        const t = o.ticketId;
+        if (!t) return '';
+        return `
+          <div class="bg-[#1a1a1a] border border-white/10 rounded-xl overflow-hidden">
+            <div class="relative h-36 bg-[#222]">
+              ${t.ticketImage
+                ? `<img src="${API_BASE.replace('/api','')}/${t.ticketImage}" class="w-full h-full object-cover" />`
+                : `<div class="w-full h-full flex items-center justify-center text-4xl">🎟</div>`
+              }
+              <div class="absolute top-2 right-2 bg-green-500/20 border border-green-500/30 rounded-full px-2.5 py-1 text-xs text-green-400 font-semibold">✓ Purchased</div>
+            </div>
+            <div class="p-4">
+              <p class="text-xs text-gray-500 mb-1">${t.category || 'Event'}</p>
+              <h3 class="font-bold text-sm mb-2" style="font-family:'Syne',sans-serif">${t.eventName || 'Ticket'}</h3>
+              <div class="flex items-center justify-between text-xs text-gray-500 mb-3">
+                <span>📍 ${t.city}</span>
+                <span>📅 ${new Date(t.date).toLocaleDateString('en-IN', {day:'numeric',month:'short'})}</span>
+              </div>
+              <p class="text-xs text-gray-400 mb-3">Paid: <span class="text-white font-semibold">${rupees(o.amount || t.price)}</span></p>
+              <button onclick="viewTicketQR('${t._id}', '${t.eventName}', '${t.ticketImage || ''}')" 
+                class="btn-primary w-full py-2.5 rounded-lg text-xs font-bold">
+                🔓 View Ticket & QR
+              </button>
+            </div>
+          </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function viewTicketQR(id, name, imgPath) {
+  document.getElementById('modal-title').textContent = name;
+  document.getElementById('modal-desc').textContent = 'Show this QR code at the venue entrance.';
+  const fullImg = imgPath ? `${API_BASE.replace('/api','')}/${imgPath}` : '';
+  document.getElementById('modal-img').src = fullImg;
+  document.getElementById('modal-download').href = fullImg;
+  document.getElementById('modal-download').download = `ticket-${id}.jpg`;
+  document.getElementById('qr-modal').classList.remove('hidden');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('qr-modal')) {
+    document.getElementById('qr-modal').classList.add('hidden');
+  }
+}
+
+async function deleteTicket(id) {
+  if (!confirm('Remove this ticket listing? This cannot be undone.')) return;
+  try {
+    await apiCall(`/tickets/${id}`, 'DELETE');
+    showToast('Ticket removed from marketplace', 'success');
+    loadSellerData();
+  } catch(e) {
+    showToast(e.message || 'Failed to remove ticket', 'error');
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sell a Ticket – SwapifyIndia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#0a0a0a] text-white">
+
+<!-- NAVBAR -->
+<nav class="nav-scrolled fixed top-0 left-0 right-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-[#ff4d1c] flex items-center justify-center font-black text-sm">S</div>
+      <span class="font-black text-xl" style="font-family:'Syne',sans-serif">SwapifyIndia</span>
+    </a>
+    <div class="flex items-center gap-3" id="nav-auth">
+      <a href="login.html" class="text-sm text-gray-400 hover:text-white px-4 py-2">Login</a>
+      <a href="signup.html" class="btn-primary text-sm px-5 py-2 rounded-full font-semibold">Get Started</a>
+    </div>
+    <div class="hidden items-center gap-3" id="nav-user">
+      <span class="text-sm text-gray-400" id="nav-username"></span>
+      <a href="dashboard.html" class="text-sm text-gray-400 hover:text-white">Dashboard</a>
+      <button onclick="logout()" class="text-sm text-[#ff4d1c]">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<div class="pt-20 min-h-screen">
+  <div class="bg-[#0f0f0f] border-b border-white/5 py-10 px-6">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-4xl font-black mb-2" style="font-family:'Syne',sans-serif">Sell a <span class="text-gradient">Ticket</span></h1>
+      <p class="text-gray-400 text-sm">List your unused ticket at face value. Free to list, 10% fee only on sale.</p>
+    </div>
+  </div>
+
+  <div class="max-w-3xl mx-auto px-6 py-10">
+    <div class="form-card rounded-2xl p-8">
+
+      <div id="form-error" class="hidden mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm"></div>
+
+      <!-- Step Indicator -->
+      <div class="flex items-center gap-3 mb-8">
+        <div class="flex items-center gap-2">
+          <div class="step-dot w-7 h-7 rounded-full bg-[#ff4d1c] flex items-center justify-center text-xs font-bold" id="dot1">1</div>
+          <span class="text-sm font-semibold text-white">Event Info</span>
+        </div>
+        <div class="flex-1 h-px bg-white/10"></div>
+        <div class="flex items-center gap-2">
+          <div class="step-dot w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-gray-400" id="dot2">2</div>
+          <span class="text-sm text-gray-400" id="step2-label">Pricing & Upload</span>
+        </div>
+        <div class="flex-1 h-px bg-white/10"></div>
+        <div class="flex items-center gap-2">
+          <div class="step-dot w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-gray-400" id="dot3">3</div>
+          <span class="text-sm text-gray-400" id="step3-label">Review</span>
+        </div>
+      </div>
+
+      <!-- STEP 1: Event Info -->
+      <div id="step-1">
+        <div class="space-y-5">
+          <div>
+            <label class="form-label">Event Name *</label>
+            <input type="text" id="eventName" class="form-input" placeholder="e.g. Arijit Singh Live Concert – Mumbai" required/>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="form-label">Category *</label>
+              <select id="category" class="form-input">
+                <option value="">Select Category</option>
+                <option>Concerts</option><option>Sports</option><option>Movies</option>
+                <option>Comedy Shows</option><option>Festivals</option><option>Other Events</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">City *</label>
+              <select id="city" class="form-input">
+                <option value="">Select City</option>
+                <option>Mumbai</option><option>Delhi</option><option>Bengaluru</option>
+                <option>Chennai</option><option>Hyderabad</option><option>Kolkata</option>
+                <option>Pune</option><option>Ahmedabad</option><option>Goa</option>
+                <option>Jaipur</option><option>Chandigarh</option><option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="form-label">Event Date & Time *</label>
+              <input type="datetime-local" id="eventDate" class="form-input" required/>
+            </div>
+            <div>
+              <label class="form-label">Seat / Section *</label>
+              <input type="text" id="seat" class="form-input" placeholder="e.g. A12, Row B, Standing" required/>
+            </div>
+          </div>
+          <div>
+            <label class="form-label">Description (optional)</label>
+            <textarea id="description" class="form-input resize-none" rows="3" placeholder="Any additional details about the ticket..."></textarea>
+          </div>
+        </div>
+        <button onclick="goStep(2)" class="btn-primary w-full py-3.5 rounded-xl font-bold mt-6">Continue →</button>
+      </div>
+
+      <!-- STEP 2: Pricing & Upload -->
+      <div id="step-2" class="hidden">
+        <div class="space-y-5">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="form-label">Original Ticket Price (₹) *</label>
+              <input type="number" id="originalPrice" class="form-input" placeholder="e.g. 2000" min="1" oninput="updatePriceCalc()"/>
+              <p class="text-xs text-gray-500 mt-1">Face value on the original ticket</p>
+            </div>
+            <div>
+              <label class="form-label">Your Selling Price (₹) *</label>
+              <input type="number" id="price" class="form-input" placeholder="Must be ≤ original price" min="1" oninput="updatePriceCalc()"/>
+              <p class="text-xs text-gray-500 mt-1" id="price-hint">Cannot exceed original price</p>
+            </div>
+          </div>
+
+          <!-- Price Calculator -->
+          <div id="price-calc" class="hidden bg-[#1a1a1a] border border-white/10 rounded-xl p-4">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Earnings Breakdown</p>
+            <div class="grid grid-cols-3 gap-3">
+              <div class="text-center">
+                <p class="text-lg font-black text-white" id="calc-price">₹0</p>
+                <p class="text-xs text-gray-500">Ticket Price</p>
+              </div>
+              <div class="text-center">
+                <p class="text-lg font-black text-[#ff4d1c]" id="calc-fee">₹0</p>
+                <p class="text-xs text-gray-500">Platform Fee</p>
+              </div>
+              <div class="text-center">
+                <p class="text-lg font-black text-green-400" id="calc-earn">₹0</p>
+                <p class="text-xs text-gray-500">You Receive</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ticket Upload -->
+          <div>
+            <label class="form-label">Upload Ticket Image (with QR Code) *</label>
+            <div class="upload-zone" id="upload-zone" onclick="document.getElementById('ticketFile').click()">
+              <input type="file" id="ticketFile" accept="image/*" class="hidden" onchange="handleFileSelect(this)"/>
+              <div id="upload-placeholder">
+                <div class="text-3xl mb-3">📸</div>
+                <p class="font-semibold text-sm">Click to upload ticket image</p>
+                <p class="text-xs text-gray-500 mt-1">PNG, JPG up to 5MB · QR code must be visible</p>
+              </div>
+              <div id="upload-preview" class="hidden">
+                <img id="preview-img" class="max-h-40 rounded-lg mx-auto mb-2" alt="Preview"/>
+                <p class="text-xs text-[#ff4d1c] font-semibold" id="preview-name"></p>
+                <p class="text-xs text-gray-500 mt-1">Click to change image</p>
+              </div>
+            </div>
+            <p class="text-xs text-orange-400/70 mt-2">⚠ QR code will be blurred for buyers until they purchase. Only you and the buyer will ever see it.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-3 mt-6">
+          <button onclick="goStep(1)" class="btn-ghost flex-1 py-3.5 rounded-xl font-semibold">← Back</button>
+          <button onclick="goStep(3)" class="btn-primary flex-1 py-3.5 rounded-xl font-bold">Review →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Review & Submit -->
+      <div id="step-3" class="hidden">
+        <div class="bg-[#1a1a1a] border border-white/10 rounded-xl p-6 mb-6">
+          <h3 class="font-bold mb-4 text-sm text-gray-400 uppercase tracking-wider">Review Your Listing</h3>
+          <div class="space-y-3" id="review-content"></div>
+        </div>
+
+        <div class="p-4 bg-[#ff4d1c]/5 border border-[#ff4d1c]/20 rounded-xl mb-6">
+          <div class="flex items-start gap-3">
+            <span class="text-lg mt-0.5">📋</span>
+            <div>
+              <p class="font-semibold text-sm mb-1">Listing Rules</p>
+              <ul class="text-xs text-gray-400 space-y-1">
+                <li>• Ticket price cannot exceed the original face value</li>
+                <li>• If unsold, ticket returns to you 2 hours before the event</li>
+                <li>• 10% platform fee deducted only on successful sale</li>
+                <li>• You may not list the same ticket twice</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <button onclick="goStep(2)" class="btn-ghost flex-1 py-3.5 rounded-xl font-semibold">← Back</button>
+          <button onclick="submitListing()" id="submit-btn" class="btn-primary flex-1 py-3.5 rounded-xl font-bold">
+            🎟 List My Ticket
+          </button>
+        </div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div id="step-success" class="hidden text-center py-8">
+        <div class="text-6xl mb-4">🎉</div>
+        <h2 class="text-2xl font-black mb-3" style="font-family:'Syne',sans-serif">Ticket Listed!</h2>
+        <p class="text-gray-400 text-sm mb-6">Your ticket is now live on SwapifyIndia. You'll be notified when someone buys it.</p>
+        <div class="flex gap-3 justify-center">
+          <a href="tickets.html" class="btn-ghost px-6 py-3 rounded-xl font-semibold text-sm">Browse Tickets</a>
+          <a href="dashboard.html" class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm">My Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  updateNavAuth();
+  if (!isLoggedIn()) {
+    showToast('Please login to sell tickets', 'error');
+    setTimeout(() => window.location.href = 'login.html?redirect=sell-ticket.html', 1000);
+  }
+  // Set min date to today
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  document.getElementById('eventDate').min = now.toISOString().slice(0, 16);
+});
+
+function goStep(n) {
+  if (n === 2 && !validateStep1()) return;
+  if (n === 3 && !validateStep2()) return;
+
+  [1,2,3].forEach(i => {
+    document.getElementById(`step-${i}`).classList.add('hidden');
+    const dot = document.getElementById(`dot${i}`);
+    dot.className = i <= n
+      ? 'step-dot w-7 h-7 rounded-full bg-[#ff4d1c] flex items-center justify-center text-xs font-bold'
+      : 'step-dot w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-gray-400';
+  });
+  document.getElementById(`step-${n}`).classList.remove('hidden');
+
+  if (n === 3) buildReview();
+}
+
+function validateStep1() {
+  const fields = ['eventName','category','city','eventDate','seat'];
+  for (const f of fields) {
+    if (!document.getElementById(f).value.trim()) {
+      showFormError('Please fill in all required fields.');
+      return false;
+    }
+  }
+  const date = new Date(document.getElementById('eventDate').value);
+  if (date <= new Date()) {
+    showFormError('Event date must be in the future.');
+    return false;
+  }
+  hideFormError();
+  return true;
+}
+
+function validateStep2() {
+  const orig = parseFloat(document.getElementById('originalPrice').value);
+  const price = parseFloat(document.getElementById('price').value);
+  const file = document.getElementById('ticketFile').files[0];
+
+  if (!orig || orig <= 0) { showFormError('Enter the original ticket price.'); return false; }
+  if (!price || price <= 0) { showFormError('Enter your selling price.'); return false; }
+  if (price > orig) { showFormError('Selling price cannot exceed original price (₹' + orig + ').'); return false; }
+  if (!file) { showFormError('Please upload your ticket image.'); return false; }
+  hideFormError();
+  return true;
+}
+
+function updatePriceCalc() {
+  const price = parseFloat(document.getElementById('price').value) || 0;
+  const orig = parseFloat(document.getElementById('originalPrice').value) || 0;
+  const calc = document.getElementById('price-calc');
+
+  if (price > 0) {
+    calc.classList.remove('hidden');
+    const fee = Math.round(price * 0.1);
+    document.getElementById('calc-price').textContent = rupees(price);
+    document.getElementById('calc-fee').textContent = rupees(fee);
+    document.getElementById('calc-earn').textContent = rupees(price - fee);
+  }
+
+  if (orig > 0 && price > orig) {
+    document.getElementById('price-hint').textContent = `⚠ Cannot exceed ₹${orig}`;
+    document.getElementById('price-hint').style.color = '#f87171';
+  } else {
+    document.getElementById('price-hint').textContent = 'Cannot exceed original price';
+    document.getElementById('price-hint').style.color = '';
+  }
+}
+
+function handleFileSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { showFormError('File too large. Max 5MB.'); return; }
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('preview-img').src = e.target.result;
+    document.getElementById('preview-name').textContent = file.name;
+    document.getElementById('upload-placeholder').classList.add('hidden');
+    document.getElementById('upload-preview').classList.remove('hidden');
+  };
+  reader.readAsDataURL(file);
+}
+
+// Drag & drop
+const zone = document.getElementById ? document.getElementById('upload-zone') : null;
+if (zone) {
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragging'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragging'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('dragging');
+    const dt = new DataTransfer();
+    dt.items.add(e.dataTransfer.files[0]);
+    document.getElementById('ticketFile').files = dt.files;
+    handleFileSelect(document.getElementById('ticketFile'));
+  });
+}
+
+function buildReview() {
+  const fields = {
+    'Event Name': document.getElementById('eventName').value,
+    'Category': document.getElementById('category').value,
+    'City': document.getElementById('city').value,
+    'Date': formatDate(document.getElementById('eventDate').value),
+    'Seat/Section': document.getElementById('seat').value,
+    'Original Price': rupees(document.getElementById('originalPrice').value),
+    'Selling Price': rupees(document.getElementById('price').value),
+    'You Receive': rupees(Math.round(parseFloat(document.getElementById('price').value) * 0.9)),
+    'Ticket Image': document.getElementById('ticketFile').files[0]?.name || '–',
+  };
+  document.getElementById('review-content').innerHTML = Object.entries(fields).map(([k,v]) =>
+    `<div class="flex justify-between py-2 border-b border-white/5 last:border-0">
+      <span class="text-gray-400 text-sm">${k}</span>
+      <span class="text-sm font-semibold">${v}</span>
+    </div>`
+  ).join('');
+}
+
+async function submitListing() {
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Listing...';
+
+  try {
+    const formData = new FormData();
+    formData.append('eventName', document.getElementById('eventName').value);
+    formData.append('category', document.getElementById('category').value);
+    formData.append('city', document.getElementById('city').value);
+    formData.append('date', document.getElementById('eventDate').value);
+    formData.append('seat', document.getElementById('seat').value);
+    formData.append('description', document.getElementById('description').value);
+    formData.append('originalPrice', document.getElementById('originalPrice').value);
+    formData.append('price', document.getElementById('price').value);
+    formData.append('ticketImage', document.getElementById('ticketFile').files[0]);
+
+    await apiUpload('/tickets', formData);
+
+    // Show success
+    [1,2,3].forEach(i => document.getElementById(`step-${i}`)?.classList.add('hidden'));
+    document.getElementById('step-success').classList.remove('hidden');
+  } catch(e) {
+    showFormError(e.message || 'Failed to list ticket. Please try again.');
+    btn.disabled = false;
+    btn.textContent = '🎟 List My Ticket';
+  }
+}
+
+function showFormError(msg) {
+  const el = document.getElementById('form-error');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function hideFormError() {
+  document.getElementById('form-error').classList.add('hidden');
+}
+</script>
+</body>
+</html>

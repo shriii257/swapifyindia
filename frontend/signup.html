@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up – SwapifyIndia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#0a0a0a] text-white min-h-screen flex items-center justify-center p-6">
+<div class="hero-bg" style="position:fixed;inset:0;pointer-events:none"></div>
+<div class="hero-grid" style="position:fixed;inset:0;pointer-events:none"></div>
+
+<div class="relative z-10 w-full max-w-md animate-fade-up">
+  <div class="text-center mb-8">
+    <a href="index.html" class="inline-flex items-center gap-2 mb-6">
+      <div class="w-9 h-9 rounded-xl bg-[#ff4d1c] flex items-center justify-center font-black text-sm">S</div>
+      <span class="font-black text-xl" style="font-family:'Syne',sans-serif">SwapifyIndia</span>
+    </a>
+    <h1 class="text-3xl font-black" style="font-family:'Syne',sans-serif">Create account</h1>
+    <p class="text-gray-400 mt-2 text-sm">Start buying & selling tickets for free</p>
+  </div>
+
+  <div class="auth-card rounded-2xl p-8">
+    <div id="error-msg" class="hidden mb-5 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm"></div>
+    <div id="success-msg" class="hidden mb-5 p-4 bg-green-500/10 border border-green-500/30 rounded-xl text-green-400 text-sm"></div>
+
+    <div class="space-y-4">
+      <div>
+        <label class="form-label">Full Name</label>
+        <input type="text" id="name" class="form-input" placeholder="Rahul Sharma" required/>
+      </div>
+      <div>
+        <label class="form-label">Email Address</label>
+        <input type="email" id="email" class="form-input" placeholder="you@example.com" required/>
+      </div>
+      <div>
+        <label class="form-label">Password</label>
+        <div class="relative">
+          <input type="password" id="password" class="form-input pr-12" placeholder="Min. 6 characters" required/>
+          <button type="button" onclick="togglePwd('password')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 text-sm">👁</button>
+        </div>
+      </div>
+      <div>
+        <label class="form-label">Confirm Password</label>
+        <input type="password" id="confirm-password" class="form-input" placeholder="Repeat password" required/>
+      </div>
+
+      <div class="pt-1">
+        <label class="flex items-start gap-3 cursor-pointer">
+          <input type="checkbox" id="terms" class="mt-1 accent-[#ff4d1c]"/>
+          <span class="text-xs text-gray-400">I agree to SwapifyIndia's <a href="#" class="text-[#ff4d1c]">Terms of Service</a> and <a href="#" class="text-[#ff4d1c]">Privacy Policy</a></span>
+        </label>
+      </div>
+
+      <button onclick="doSignup()" id="signup-btn" class="btn-primary w-full py-3.5 rounded-xl font-bold text-base mt-2">
+        Create Account
+      </button>
+    </div>
+
+    <div class="mt-6 pt-6 border-t border-white/10 text-center">
+      <p class="text-gray-400 text-sm">Already have an account? <a href="login.html" class="text-[#ff4d1c] font-semibold hover:text-orange-400 transition-colors">Sign in</a></p>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    if (isLoggedIn()) window.location.href = 'dashboard.html';
+  });
+
+  function togglePwd(inputId) {
+    const inp = document.getElementById(inputId);
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  }
+
+  async function doSignup() {
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirm = document.getElementById('confirm-password').value;
+    const terms = document.getElementById('terms').checked;
+    const btn = document.getElementById('signup-btn');
+
+    if (!name || !email || !password) { showErr('Please fill in all fields.'); return; }
+    if (password.length < 6) { showErr('Password must be at least 6 characters.'); return; }
+    if (password !== confirm) { showErr('Passwords do not match.'); return; }
+    if (!terms) { showErr('Please accept the terms and conditions.'); return; }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="opacity-70">Creating account...</span>';
+
+    try {
+      const data = await apiCall('/auth/signup', 'POST', { name, email, password });
+      localStorage.setItem('si_token', data.token);
+      localStorage.setItem('si_user', JSON.stringify(data.user));
+      showToast('Welcome to SwapifyIndia, ' + data.user.name + '!', 'success');
+      setTimeout(() => window.location.href = 'dashboard.html', 700);
+    } catch(e) {
+      showErr(e.message || 'Signup failed. Please try again.');
+      btn.disabled = false;
+      btn.innerHTML = 'Create Account';
+    }
+  }
+
+  function showErr(msg) {
+    const errDiv = document.getElementById('error-msg');
+    errDiv.textContent = msg;
+    errDiv.classList.remove('hidden');
+  }
+</script>
+</body>
+</html>

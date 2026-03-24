@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ticket Details – SwapifyIndia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#0a0a0a] text-white">
+
+<!-- NAVBAR -->
+<nav class="nav-scrolled fixed top-0 left-0 right-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-[#ff4d1c] flex items-center justify-center font-black text-sm">S</div>
+      <span class="font-black text-xl" style="font-family:'Syne',sans-serif">SwapifyIndia</span>
+    </a>
+    <div class="flex items-center gap-3" id="nav-auth">
+      <a href="login.html" class="text-sm text-gray-400 hover:text-white px-4 py-2">Login</a>
+      <a href="signup.html" class="btn-primary text-sm px-5 py-2 rounded-full font-semibold">Get Started</a>
+    </div>
+    <div class="hidden items-center gap-3" id="nav-user">
+      <span class="text-sm text-gray-400" id="nav-username"></span>
+      <button onclick="logout()" class="text-sm text-[#ff4d1c]">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<div class="pt-20 min-h-screen">
+  <div id="loading" class="flex items-center justify-center min-h-[60vh]">
+    <div class="text-center">
+      <div class="text-4xl mb-4 animate-pulse">🎟</div>
+      <p class="text-gray-400">Loading ticket details...</p>
+    </div>
+  </div>
+
+  <div id="ticket-content" class="hidden max-w-6xl mx-auto px-6 py-10">
+    <a href="tickets.html" class="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8 text-sm">
+      ← Back to tickets
+    </a>
+
+    <div class="grid lg:grid-cols-2 gap-12">
+      <!-- LEFT: Image & QR Shield -->
+      <div>
+        <div class="rounded-2xl overflow-hidden bg-[#111] border border-white/10 aspect-[4/3] relative" id="ticket-img-container">
+          <div class="ticket-img-placeholder w-full h-full flex items-center justify-center" id="img-placeholder">
+            <span class="text-6xl" id="cat-emoji">🎟</span>
+          </div>
+          <!-- Image shown blurred -->
+          <img id="ticket-img" class="detail-blur-img w-full h-full object-cover hidden absolute inset-0" alt="Ticket"/>
+          <!-- QR Shield overlay -->
+          <div id="qr-overlay" class="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/60 backdrop-blur-sm">
+            <div class="w-16 h-16 rounded-xl bg-[#ff4d1c]/10 border border-[#ff4d1c]/30 flex items-center justify-center text-3xl">🔒</div>
+            <div class="text-center">
+              <p class="font-bold text-sm" style="font-family:'Syne',sans-serif">QR Code Hidden</p>
+              <p class="text-xs text-gray-400 mt-1">Purchase to reveal full ticket</p>
+            </div>
+          </div>
+          <!-- After purchase: show full -->
+          <div id="qr-revealed" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-[#0a0a0a] p-6">
+            <img id="qr-full-img" class="w-full h-full object-contain" alt="Full Ticket"/>
+            <p class="text-xs text-green-400 mt-4 font-semibold">✓ This is your ticket. Screenshot to save.</p>
+          </div>
+        </div>
+
+        <div class="mt-4 p-4 bg-[#111] border border-white/10 rounded-xl">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-[#ff4d1c]/10 border border-[#ff4d1c]/30 flex items-center justify-center text-sm">🔒</div>
+            <div>
+              <p class="text-sm font-semibold">Ticket Image Blurred</p>
+              <p class="text-xs text-gray-400">QR code is hidden until you purchase this ticket.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Details -->
+      <div>
+        <div class="mb-2">
+          <span id="ticket-category-badge" class="text-xs font-bold text-[#ff4d1c] bg-[#ff4d1c]/10 border border-[#ff4d1c]/20 px-3 py-1 rounded-full">Category</span>
+        </div>
+        <h1 id="ticket-title" class="text-3xl font-black mt-3 mb-4 leading-tight" style="font-family:'Syne',sans-serif">Loading...</h1>
+
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="bg-[#111] border border-white/10 rounded-xl p-4">
+            <p class="text-xs text-gray-500 mb-1">📍 City</p>
+            <p class="font-semibold text-sm" id="ticket-city">–</p>
+          </div>
+          <div class="bg-[#111] border border-white/10 rounded-xl p-4">
+            <p class="text-xs text-gray-500 mb-1">📅 Event Date</p>
+            <p class="font-semibold text-sm" id="ticket-date">–</p>
+          </div>
+          <div class="bg-[#111] border border-white/10 rounded-xl p-4">
+            <p class="text-xs text-gray-500 mb-1">💺 Seat / Section</p>
+            <p class="font-semibold text-sm" id="ticket-seat">–</p>
+          </div>
+          <div class="bg-[#111] border border-white/10 rounded-xl p-4">
+            <p class="text-xs text-gray-500 mb-1">📊 Status</p>
+            <p class="font-semibold text-sm" id="ticket-status">–</p>
+          </div>
+        </div>
+
+        <div id="ticket-description-wrap" class="bg-[#111] border border-white/10 rounded-xl p-4 mb-6 hidden">
+          <p class="text-xs text-gray-500 mb-2">Description</p>
+          <p class="text-sm text-gray-300 leading-relaxed" id="ticket-desc"></p>
+        </div>
+
+        <!-- Seller Info -->
+        <div class="bg-[#111] border border-white/10 rounded-xl p-4 mb-6">
+          <p class="text-xs text-gray-500 mb-2">Seller</p>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-[#ff4d1c]/20 border border-[#ff4d1c]/30 flex items-center justify-center font-bold text-sm text-[#ff4d1c]" id="seller-avatar">?</div>
+            <div>
+              <p class="font-semibold text-sm" id="seller-name">–</p>
+              <p class="text-xs text-gray-500">Verified Seller</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Price & Buy -->
+        <div id="buy-section">
+          <div class="price-tag mb-4 w-full">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs text-gray-400 mb-1">Ticket Price</p>
+                <p class="text-4xl font-black text-[#ff4d1c]" id="ticket-price" style="font-family:'Syne',sans-serif">–</p>
+              </div>
+              <div class="text-right">
+                <p class="text-xs text-gray-500 mb-1">Platform fee</p>
+                <p class="text-sm text-gray-400" id="platform-fee">–</p>
+              </div>
+            </div>
+          </div>
+
+          <button id="buy-btn" onclick="initiatePurchase()" class="btn-primary w-full py-4 rounded-xl font-bold text-base mb-3">
+            🎟 Buy Ticket Now
+          </button>
+          <p class="text-xs text-gray-500 text-center">Secure payment via Razorpay · QR revealed after payment</p>
+        </div>
+
+        <!-- Already bought -->
+        <div id="already-bought" class="hidden p-4 bg-green-500/10 border border-green-500/30 rounded-xl text-center">
+          <p class="text-green-400 font-semibold text-sm mb-1">✓ You purchased this ticket</p>
+          <p class="text-xs text-gray-400">Go to your dashboard to download it</p>
+          <a href="dashboard.html" class="inline-block mt-3 text-xs text-[#ff4d1c] underline">View Dashboard →</a>
+        </div>
+
+        <!-- Sold out -->
+        <div id="sold-out" class="hidden p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-center">
+          <p class="text-red-400 font-semibold text-sm">This ticket has already been sold</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+let ticketData = null;
+
+window.addEventListener('DOMContentLoaded', () => {
+  updateNavAuth();
+  const id = getParam('id');
+  if (!id) { window.location.href = 'tickets.html'; return; }
+  loadTicket(id);
+});
+
+async function loadTicket(id) {
+  try {
+    const data = await fetch(`${API_BASE}/tickets/${id}`).then(r => r.json());
+    ticketData = data.ticket;
+    renderTicket(ticketData);
+  } catch(e) {
+    // Demo fallback
+    ticketData = demoTickets()[0];
+    ticketData._id = id;
+    renderTicket(ticketData);
+  }
+}
+
+function renderTicket(t) {
+  const catEmojis = { 'Concerts':'🎵','Sports':'🏏','Movies':'🎬','Comedy Shows':'😂','Festivals':'🎪','Other Events':'✨' };
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('ticket-content').classList.remove('hidden');
+
+  document.getElementById('cat-emoji').textContent = catEmojis[t.category] || '🎟';
+  document.getElementById('ticket-category-badge').textContent = t.category;
+  document.getElementById('ticket-title').textContent = t.eventName;
+  document.getElementById('ticket-city').textContent = t.city;
+  document.getElementById('ticket-date').textContent = formatDate(t.date);
+  document.getElementById('ticket-seat').textContent = t.seat || 'General';
+  document.getElementById('ticket-price').textContent = rupees(t.price);
+  document.getElementById('platform-fee').textContent = `${rupees(Math.round(t.price * 0.1))} (10%)`;
+
+  const statusMap = { available: '● Available', sold: '● Sold', reserved: '● Reserved', returned: '● Returned', expired: '● Expired' };
+  const statusColors = { available: 'color:#4ade80', sold: 'color:#f87171', reserved: 'color:#fbbf24', returned: 'color:#9ca3af', expired: 'color:#9ca3af' };
+  document.getElementById('ticket-status').innerHTML = `<span style="${statusColors[t.status]||'color:#4ade80'}">${statusMap[t.status]||'● Available'}</span>`;
+
+  if (t.description) {
+    document.getElementById('ticket-desc').textContent = t.description;
+    document.getElementById('ticket-description-wrap').classList.remove('hidden');
+  }
+
+  if (t.ticketImage) {
+    const img = document.getElementById('ticket-img');
+    img.src = `${API_BASE.replace('/api','')}/${t.ticketImage}`;
+    img.classList.remove('hidden');
+    document.getElementById('img-placeholder').classList.add('hidden');
+  }
+
+  const sellerName = t.sellerId?.name || 'Anonymous Seller';
+  document.getElementById('seller-name').textContent = sellerName;
+  document.getElementById('seller-avatar').textContent = sellerName[0].toUpperCase();
+
+  // Show correct action
+  const user = getUser();
+  if (t.status === 'sold') {
+    document.getElementById('buy-section').classList.add('hidden');
+    // Check if current user is the buyer
+    document.getElementById('sold-out').classList.remove('hidden');
+    // If user bought it, show the ticket
+    if (user && t.buyerId === user._id) {
+      document.getElementById('sold-out').classList.add('hidden');
+      document.getElementById('already-bought').classList.remove('hidden');
+    }
+  } else if (t.status !== 'available') {
+    document.getElementById('buy-section').classList.add('hidden');
+    document.getElementById('sold-out').classList.remove('hidden');
+  }
+
+  // If user is the seller, hide buy button
+  if (user && t.sellerId && (t.sellerId._id === user._id || t.sellerId === user._id)) {
+    document.getElementById('buy-section').classList.add('hidden');
+    document.getElementById('sold-out').innerHTML = '<p class="text-yellow-400 font-semibold text-sm">⚡ This is your listing</p>';
+    document.getElementById('sold-out').className = 'p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl text-center';
+    document.getElementById('sold-out').classList.remove('hidden');
+  }
+
+  document.title = `${t.eventName} – SwapifyIndia`;
+}
+
+async function initiatePurchase() {
+  if (!requireAuth()) return;
+  if (!ticketData) return;
+
+  const btn = document.getElementById('buy-btn');
+  btn.disabled = true;
+  btn.textContent = 'Processing...';
+
+  try {
+    // Create Razorpay order
+    const orderData = await apiCall('/payments/create-order', 'POST', { ticketId: ticketData._id });
+
+    const options = {
+      key: orderData.razorpayKey,
+      amount: orderData.amount,
+      currency: 'INR',
+      name: 'SwapifyIndia',
+      description: ticketData.eventName,
+      order_id: orderData.orderId,
+      handler: async function(response) {
+        // Verify payment
+        try {
+          const verifyData = await apiCall('/payments/verify', 'POST', {
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            ticketId: ticketData._id
+          });
+          showToast('Payment successful! Ticket unlocked.', 'success');
+          // Reveal ticket
+          if (verifyData.ticketImage) {
+            document.getElementById('qr-overlay').classList.add('hidden');
+            document.getElementById('qr-revealed').classList.remove('hidden');
+            document.getElementById('qr-full-img').src = `${API_BASE.replace('/api','')}/${verifyData.ticketImage}`;
+            const img = document.getElementById('ticket-img');
+            img.style.filter = 'none';
+            img.style.transform = 'scale(1)';
+          }
+          document.getElementById('buy-section').classList.add('hidden');
+          document.getElementById('already-bought').classList.remove('hidden');
+        } catch(e) {
+          showToast('Payment verification failed: ' + e.message, 'error');
+        }
+      },
+      prefill: {
+        name: getUser()?.name,
+        email: getUser()?.email
+      },
+      theme: { color: '#ff4d1c' },
+      modal: {
+        ondismiss: () => {
+          btn.disabled = false;
+          btn.textContent = '🎟 Buy Ticket Now';
+        }
+      }
+    };
+
+    const rzp = new Razorpay(options);
+    rzp.open();
+  } catch(e) {
+    showToast('Failed to initiate payment: ' + e.message, 'error');
+    btn.disabled = false;
+    btn.textContent = '🎟 Buy Ticket Now';
+  }
+}
+</script>
+</body>
+</html>

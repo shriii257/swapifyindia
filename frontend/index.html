@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SwapifyIndia – Don't waste tickets.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#0a0a0a] text-white overflow-x-hidden">
+
+<!-- NAVBAR -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2">
+      <div class="logo-mark w-8 h-8 rounded-lg flex items-center justify-center bg-[#ff4d1c] text-white font-black text-sm">S</div>
+      <span class="font-black text-xl tracking-tight" style="font-family:'Syne',sans-serif">SwapifyIndia</span>
+    </a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="tickets.html" class="nav-link text-sm text-gray-400 hover:text-white transition-colors">Browse Tickets</a>
+      <a href="sell-ticket.html" class="nav-link text-sm text-gray-400 hover:text-white transition-colors">Sell a Ticket</a>
+      <a href="dashboard.html" class="nav-link text-sm text-gray-400 hover:text-white transition-colors" id="nav-dashboard" style="display:none">Dashboard</a>
+    </div>
+    <div class="flex items-center gap-3" id="nav-auth">
+      <a href="login.html" class="text-sm text-gray-400 hover:text-white transition-colors px-4 py-2">Login</a>
+      <a href="signup.html" class="btn-primary text-sm px-5 py-2 rounded-full font-semibold">Get Started</a>
+    </div>
+    <div class="hidden items-center gap-3" id="nav-user">
+      <span class="text-sm text-gray-400" id="nav-username"></span>
+      <button onclick="logout()" class="text-sm text-[#ff4d1c] hover:text-red-400 transition-colors">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero-section min-h-screen flex items-center justify-center relative pt-20">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="max-w-7xl mx-auto px-6 text-center relative z-10">
+    <div class="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2 mb-8 text-xs text-gray-400 animate-fade-up">
+      <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+      India's First Ticket Re-Sale Platform
+    </div>
+    <h1 class="hero-title text-6xl md:text-8xl font-black leading-none mb-6 animate-fade-up-delay" style="font-family:'Syne',sans-serif">
+      Don't waste<br/>
+      <span class="text-gradient">tickets.</span>
+    </h1>
+    <p class="text-xl text-gray-400 max-w-xl mx-auto mb-10 animate-fade-up-delay-2 font-light" style="font-family:'DM Sans',sans-serif">
+      Let someone else enjoy them. List your unused event tickets and connect with fans who actually want to go.
+    </p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up-delay-3">
+      <a href="tickets.html" class="btn-primary px-8 py-4 rounded-full font-bold text-base w-full sm:w-auto text-center">Browse Tickets →</a>
+      <a href="sell-ticket.html" class="btn-ghost px-8 py-4 rounded-full font-semibold text-base w-full sm:w-auto text-center">Sell My Ticket</a>
+    </div>
+    <div class="flex items-center justify-center gap-8 mt-14 text-sm text-gray-500 animate-fade-up-delay-3">
+      <div class="flex flex-col items-center gap-1">
+        <span class="text-2xl font-black text-white" style="font-family:'Syne',sans-serif" id="stat-tickets">2,400+</span>
+        <span>Tickets Listed</span>
+      </div>
+      <div class="w-px h-8 bg-white/10"></div>
+      <div class="flex flex-col items-center gap-1">
+        <span class="text-2xl font-black text-white" style="font-family:'Syne',sans-serif">₹0</span>
+        <span>Listing Fee</span>
+      </div>
+      <div class="w-px h-8 bg-white/10"></div>
+      <div class="flex flex-col items-center gap-1">
+        <span class="text-2xl font-black text-white" style="font-family:'Syne',sans-serif">10%</span>
+        <span>Only on Sale</span>
+      </div>
+    </div>
+  </div>
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+    <div class="w-6 h-10 border-2 border-white/20 rounded-full flex items-start justify-center pt-2">
+      <div class="w-1 h-2 bg-white/40 rounded-full"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SEARCH BAR -->
+<section class="py-16 px-6">
+  <div class="max-w-4xl mx-auto">
+    <div class="search-card p-2 rounded-2xl">
+      <div class="flex flex-col md:flex-row gap-2">
+        <input type="text" id="search-input" placeholder="Search events, artists, teams..." 
+          class="flex-1 bg-transparent px-5 py-4 text-white placeholder-gray-500 outline-none text-sm"/>
+        <select id="search-city" class="bg-transparent px-5 py-4 text-gray-400 outline-none text-sm border-l border-white/10 md:w-40">
+          <option value="">All Cities</option>
+          <option>Mumbai</option><option>Delhi</option><option>Bengaluru</option>
+          <option>Chennai</option><option>Hyderabad</option><option>Kolkata</option>
+          <option>Pune</option><option>Ahmedabad</option>
+        </select>
+        <select id="search-category" class="bg-transparent px-5 py-4 text-gray-400 outline-none text-sm border-l border-white/10 md:w-44">
+          <option value="">All Categories</option>
+          <option>Concerts</option><option>Sports</option><option>Movies</option>
+          <option>Comedy Shows</option><option>Festivals</option><option>Other Events</option>
+        </select>
+        <button onclick="doSearch()" class="btn-primary px-8 py-4 rounded-xl font-semibold text-sm">Search</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="py-12 px-6">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="text-3xl font-black mb-8" style="font-family:'Syne',sans-serif">Browse by <span class="text-gradient">Category</span></h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <a href="tickets.html?category=Concerts" class="category-card group p-6 rounded-2xl text-center cursor-pointer">
+        <div class="text-3xl mb-3">🎵</div>
+        <div class="font-semibold text-sm">Concerts</div>
+      </a>
+      <a href="tickets.html?category=Sports" class="category-card group p-6 rounded-2xl text-center cursor-pointer">
+        <div class="text-3xl mb-3">🏏</div>
+        <div class="font-semibold text-sm">Sports</div>
+      </a>
+      <a href="tickets.html?category=Movies" class="category-card group p-6 rounded-2xl text-center cursor-pointer">
+        <div class="text-3xl mb-3">🎬</div>
+        <div class="font-semibold text-sm">Movies</div>
+      </a>
+      <a href="tickets.html?category=Comedy+Shows" class="category-card group p-6 rounded-2xl text-center cursor-pointer">
+        <div class="text-3xl mb-3">😂</div>
+        <div class="font-semibold text-sm">Comedy Shows</div>
+      </a>
+      <a href="tickets.html?category=Festivals" class="category-card group p-6 rounded-2xl text-center cursor-pointer">
+        <div class="text-3xl mb-3">🎪</div>
+        <div class="font-semibold text-sm">Festivals</div>
+      </a>
+      <a href="tickets.html?category=Other+Events" class="category-card group p-6 rounded-2xl text-center cursor-pointer">
+        <div class="text-3xl mb-3">✨</div>
+        <div class="font-semibold text-sm">Other Events</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="py-20 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-14">
+      <h2 class="text-4xl font-black mb-4" style="font-family:'Syne',sans-serif">How <span class="text-gradient">SwapifyIndia</span> Works</h2>
+      <p class="text-gray-400 max-w-lg mx-auto">Simple, transparent, and fair for both buyers and sellers.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="step-card p-8 rounded-2xl">
+        <div class="step-number">01</div>
+        <h3 class="text-xl font-bold mb-3 mt-4" style="font-family:'Syne',sans-serif">List Your Ticket</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Upload your unused ticket at or below face value. Add event details and a blurred preview. Listing is completely free.</p>
+      </div>
+      <div class="step-card p-8 rounded-2xl">
+        <div class="step-number">02</div>
+        <h3 class="text-xl font-bold mb-3 mt-4" style="font-family:'Syne',sans-serif">Buyer Pays Securely</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">A fan finds your ticket, pays the face value via Razorpay. We deduct a 10% platform fee only on successful sales.</p>
+      </div>
+      <div class="step-card p-8 rounded-2xl">
+        <div class="step-number">03</div>
+        <h3 class="text-xl font-bold mb-3 mt-4" style="font-family:'Syne',sans-serif">Both Win</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Buyer gets the full ticket with QR code. Seller gets 90% of the ticket price. If unsold, ticket returns to you 2 hours before the event.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LATEST TICKETS -->
+<section class="py-16 px-6" id="latest-tickets-section">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-3xl font-black" style="font-family:'Syne',sans-serif">Latest <span class="text-gradient">Listings</span></h2>
+      <a href="tickets.html" class="text-[#ff4d1c] hover:text-orange-400 text-sm font-semibold transition-colors">View All →</a>
+    </div>
+    <div id="latest-tickets" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Populated by JS -->
+      <div class="ticket-skeleton rounded-2xl h-72"></div>
+      <div class="ticket-skeleton rounded-2xl h-72"></div>
+      <div class="ticket-skeleton rounded-2xl h-72"></div>
+      <div class="ticket-skeleton rounded-2xl h-72"></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMISSION EXPLAINER -->
+<section class="py-20 px-6">
+  <div class="max-w-4xl mx-auto">
+    <div class="commission-card p-10 rounded-3xl text-center">
+      <div class="text-5xl mb-4">💸</div>
+      <h2 class="text-3xl font-black mb-4" style="font-family:'Syne',sans-serif">Fair & Transparent Pricing</h2>
+      <p class="text-gray-400 mb-8 max-w-lg mx-auto">We only make money when you do. No listing fees, no hidden charges.</p>
+      <div class="grid grid-cols-3 gap-6 max-w-lg mx-auto">
+        <div class="bg-white/5 rounded-2xl p-4">
+          <div class="text-2xl font-black text-white mb-1">₹1000</div>
+          <div class="text-xs text-gray-400">Ticket Price</div>
+        </div>
+        <div class="bg-[#ff4d1c]/10 border border-[#ff4d1c]/30 rounded-2xl p-4">
+          <div class="text-2xl font-black text-[#ff4d1c] mb-1">₹100</div>
+          <div class="text-xs text-gray-400">Platform Fee</div>
+        </div>
+        <div class="bg-green-500/10 border border-green-500/30 rounded-2xl p-4">
+          <div class="text-2xl font-black text-green-400 mb-1">₹900</div>
+          <div class="text-xs text-gray-400">You Receive</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-white/10 py-12 px-6">
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-lg bg-[#ff4d1c] flex items-center justify-center text-white font-black text-xs">S</div>
+      <span class="font-black" style="font-family:'Syne',sans-serif">SwapifyIndia</span>
+    </div>
+    <p class="text-gray-500 text-sm">Don't waste tickets. Let someone else enjoy them.</p>
+    <div class="flex gap-6 text-sm text-gray-500">
+      <a href="tickets.html" class="hover:text-white transition-colors">Browse</a>
+      <a href="sell-ticket.html" class="hover:text-white transition-colors">Sell</a>
+      <a href="signup.html" class="hover:text-white transition-colors">Sign Up</a>
+    </div>
+  </div>
+  <div class="text-center mt-8 text-gray-600 text-xs">© 2025 SwapifyIndia. All rights reserved.</div>
+</footer>
+
+<script src="js/app.js"></script>
+<script>
+  // Load latest tickets
+  window.addEventListener('DOMContentLoaded', () => {
+    updateNavAuth();
+    loadLatestTickets();
+  });
+
+  async function loadLatestTickets() {
+    const container = document.getElementById('latest-tickets');
+    try {
+      const res = await fetch(`${API_BASE}/tickets?limit=4&status=available`);
+      const data = await res.json();
+      if (data.tickets && data.tickets.length > 0) {
+        container.innerHTML = data.tickets.map(t => renderTicketCard(t)).join('');
+      } else {
+        container.innerHTML = `<div class="col-span-4 text-center text-gray-500 py-10">No tickets listed yet. <a href="sell-ticket.html" class="text-[#ff4d1c]">Be the first to sell!</a></div>`;
+      }
+    } catch(e) {
+      container.innerHTML = demoTickets().map(t => renderTicketCard(t)).join('');
+    }
+  }
+
+  function doSearch() {
+    const q = document.getElementById('search-input').value;
+    const city = document.getElementById('search-city').value;
+    const cat = document.getElementById('search-category').value;
+    let url = `tickets.html?`;
+    if (q) url += `q=${encodeURIComponent(q)}&`;
+    if (city) url += `city=${encodeURIComponent(city)}&`;
+    if (cat) url += `category=${encodeURIComponent(cat)}&`;
+    window.location.href = url;
+  }
+
+  document.getElementById('search-input').addEventListener('keypress', e => {
+    if (e.key === 'Enter') doSearch();
+  });
+
+  // Navbar scroll effect
+  window.addEventListener('scroll', () => {
+    const nav = document.getElementById('navbar');
+    if (window.scrollY > 50) {
+      nav.classList.add('nav-scrolled');
+    } else {
+      nav.classList.remove('nav-scrolled');
+    }
+  });
+</script>
+</body>
+</html>
