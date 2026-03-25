@@ -38,8 +38,17 @@ app.get('/api/health', (req, res) => {
 });
 
 // ✅ ROOT ROUTE (ADDED)
+// ── SERVE FRONTEND ──
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+// Serve index.html for root
 app.get('/', (req, res) => {
-  res.send('🚀 SwapifyIndia API is running');
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
+
+// Handle all frontend routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
 // ── CRON: Return unsold tickets 2 hours before event ──
