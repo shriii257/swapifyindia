@@ -4,7 +4,7 @@
 
 const API_BASE = window.location.hostname === 'localhost'
   ? 'http://localhost:5000/api'
-  : 'https://swapifyindia-api.onrender.com/api';
+  : '/api';
 
 // ── AUTH UTILITIES ──
 function getToken() { return localStorage.getItem('si_token'); }
