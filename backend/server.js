@@ -37,6 +37,11 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString(), service: 'SwapifyIndia API' });
 });
 
+// ✅ ROOT ROUTE (ADDED)
+app.get('/', (req, res) => {
+  res.send('🚀 SwapifyIndia API is running');
+});
+
 // ── CRON: Return unsold tickets 2 hours before event ──
 cron.schedule('*/15 * * * *', async () => {
   try {
